@@ -345,7 +345,6 @@ body {
 }
 
 /* ─── 반응 & 댓글 ────────────────────────── */
-.menu-reactions {
   font-size: 12px;
   opacity: 0.6;
   flex-shrink: 0;
@@ -361,28 +360,9 @@ body {
   color: var(--text-sub);
 }
 
-.reaction-bar {
-  display: flex;
-  gap: 8px;
-  cursor: pointer;
-}
 
-.reaction-btn {
-  padding: 3px 8px;
-  border-radius: 12px;
-  background: var(--bg);
-  font-size: 12px;
-  transition: background 0.2s;
-}
 
-.reaction-btn:hover {
-  background: var(--cyan-bg);
-}
 
-.reaction-bar.active .reaction-btn {
-  background: var(--cyan-bg);
-  color: var(--cyan-dark);
-}
 
 .comment-count {
   cursor: pointer;
@@ -406,12 +386,85 @@ body {
   color: var(--red);
 }
 
-.reaction-btn.reacted {
-  background: var(--cyan-bg);
-  color: var(--cyan-dark);
-  font-weight: 600;
+
+
+/* ─── 식단 요청 게시판 ───────────────────── */
+.request-section {
+  padding: 16px 12px;
+  text-align: center;
 }
 
-.reaction-btn.reacted .count {
-  color: var(--cyan-dark);
+.btn-request {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto 16px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, var(--cyan) 0%, var(--cyan-dark) 100%);
+  color: white;
+  border: none;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(79,195,247,0.25);
+}
+
+.btn-request:active {
+  transform: scale(0.98);
+}
+
+.recent-requests {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.recent-requests .loading,
+.recent-requests .empty,
+.recent-requests .error {
+  padding: 24px;
+  text-align: center;
+  color: var(--text-sub);
+  font-size: 13px;
+}
+
+.request-list {
+  list-style: none;
+}
+
+.request-list li {
+  border-bottom: 1px solid var(--border);
+}
+
+.request-list li:last-child {
+  border-bottom: none;
+}
+
+.request-list a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  text-decoration: none;
+  color: var(--text);
+  transition: background 0.2s;
+}
+
+.request-list a:hover {
+  background: var(--bg);
+}
+
+.request-list strong {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.request-list .meta {
+  font-size: 11px;
+  color: var(--text-light);
+  margin-left: 8px;
+  white-space: nowrap;
 }

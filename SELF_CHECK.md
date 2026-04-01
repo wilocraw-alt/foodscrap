@@ -1,53 +1,21 @@
-# v4 Implementation Self-Check
+# v5 SELF CHECK
 
-## Changes Made
+## 구현 요약
+- 반응 기능 완전 제거
+- GitHub Issues 기반 식단 요청 게시판 추가
 
-### 1. style.css v3 (already cyan theme)
-- Color variables: --cyan, --cyan-dark, --cyan-light, --cyan-bg
-- Tab sub-elements: .tab-day, .tab-date
-- .date-title styling
-- .card-badge styling
-- Card layout with headers
+## 변경 파일
+- app.js: 반응 함수 제거, fetchRecentRequests/ renderRequests/ openRequest 추가
+- style.css: reaction 스타일 제거, request-section 추가
 
-### 2. index.html
-- Added `<div class="date-title" id="dateTitle"></div>` after tabs
+## 검증 결과 (로컬 서버)
+- 메뉴 카드에 반응 바 없음 ✓
+- "식단 요청하기" 버튼 표시 ✓
+- 최근 요청 로드 시도 (API 접근성은 환경에 의존)
 
-### 3. app.js v3
-- Tab rendering: shows day number + day name in separate spans
-- Date title: rendered in selectDay()
-- Menu cards: card-header with icon, name, time badge "11:30 ~ 13:30"
-- getMenuEmoji() function with keyword matching
-- Last Updated: formatted with hour12: true (AM/PM)
-- Refresh button with loading state
+## 주의사항
+- GitHub API는 rate limit (60회/시간) 존재
+- Issues가 public repository에 있어야 함
 
-## Design Matching
-
-| Feature | Ref Design | Implementation |
-|---------|-----------|----------------|
-| Cyan header gradient | ✅ | --cyan → --cyan-dark |
-| Day tabs with number+name | ✅ | tab-day + tab-date |
-| Today red label | ✅ | .tab.today::after content 'Today' |
-| Date title above cards | ✅ | .date-title |
-| Card with icon+name+badge | ✅ | .card-header with .card-badge |
-| Menu item with emoji | ✅ | .menu-emoji in .menu-item |
-| Time badge | ✅ | "11:30 ~ 13:30" |
-| Refresh button | ✅ | Cyan gradient, loading state |
-| Last Updated AM/PM | ✅ | hour12:true format |
-
-## Assumptions
-- Time badge is static "11:30 ~ 13:30" for both restaurants (data doesn't have time info)
-- No English subtitles (data doesn't provide)
-- Today indicator uses CSS ::after as in v3
-
-## Known Limitations
-- Tab horizontal scroll may need overflow-x: auto (already in v3 CSS)
-- Emoji mapping is heuristic; may not match reference exactly
-- No pull-to-refresh
-- Reference shows "Lunch"/"Dinner" badges but our data doesn't differentiate; using restaurant names instead
-
-## Testing Needed
-- Load on mobile device to verify UI
-- Check all 7 days render correctly
-- Verify emojis are appropriate
-- Check "Today" label appears only on current day
-- Test refresh button
+## 남은 작업
+- Evaluator 검증 후 QA_REPORT.md 작성

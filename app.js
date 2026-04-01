@@ -29,48 +29,61 @@ function parseDayOfWeek(dayLabel) {
 
 
 
-// ─── 반응 토글 (실제 동작) ──────────────────
-function react(btn) {
-  const countEl = btn.querySelector('.count');
-  let count = parseInt(countEl.textContent);
-  if (btn.classList.contains('reacted')) {
-    btn.classList.remove('reacted', 'active');
-    countEl.textContent = count - 1;
-  } else {
-    btn.classList.add('reacted', 'active');
-    countEl.textContent = count + 1;
-  }
-}
-
-// 해시 기반 랜덤 카운트
-function hashCount(text, emoji) {
-  let hash = 0;
-  for (let i = 0; i < text.length; i++) {
-    hash = ((hash << 5) - hash) + text.charCodeAt(i);
-    hash |= 0;
-  }
-  hash += emoji.charCodeAt(0);
-  return Math.abs(hash % 15) + 1;
-}
-
-// ─── 반응 이모지 생성 ──────────────────────
-function generateReactions(text) {
-  let hash = 0;
-  for (let i = 0; i < text.length; i++) {
-    hash = ((hash << 5) - hash) + text.charCodeAt(i);
-    hash |= 0;
-  }
-  const all = ['👍','😋','🔥','❤️','🤤','💯','👏','😊'];
-  const count = Math.abs(hash % 3) + 1;
-  const selected = [];
-  for (let i = 0; i < count; i++) {
-    const idx = (hash + i * 7) % all.length;
-    selected.push(all[Math.abs(idx)]);
-  }
-  return selected.join('');
-}
 
 // ─── 반응 토글 ──────────────────────────────
+
+// ─── GitHub Issues 요청 목록 ───────────────────
+async function fetchRecentRequests() {
+  const container = document.getElementById('recentRequests');
+  if (!container) return;
+
+  try {
+    const resp = await fetch('https://api.github.com/repos/wilocraw-alt/foodscrap/issues?labels=menu-request&per_page=5');
+    if (!resp.ok) throw new Error('API error');
+    const issues = await resp.json();
+    renderRequests(issues);
+  } catch (e) {
+    container.innerHTML = '<div class="error">⚠️ 요청 목록을 불러올 수 없습니다.</div>';
+  }
+}
+
+function renderRequests(issues) {
+  const container = document.getElementById('recentRequests');
+  if (issues.length === 0) {
+    container.innerHTML = '<div class="empty">아직 요청이 없습니다.</div>';
+    return;
+  }
+  const list = document.createElement('ul');
+  list.className = 'request-list';
+  issues.forEach(issue => {
+    const li = document.createElement('li');
+    li.innerHTML = \`
+      <a href="\${issue.html_url}" target="_blank" rel="noopener">
+        <strong>\${issue.title.replace(/^식단 요청: /, '')}</strong>
+        <span class="meta">by \${issue.user.login} (\${timeAgo(issue.created_at)})</span>
+      </a>
+    \`;
+    list.appendChild(li);
+  });
+  container.innerHTML = '';
+  container.appendChild(list);
+}
+
+function openRequest() {
+  window.open('https://github.com/wilocraw-alt/foodscrap/issues/new?title=식단 요청: &labels=menu-request', '_blank');
+}
+
+function timeAgo(dateStr) {
+  const now = Date.now();
+  const past = new Date(dateStr).getTime();
+  const diff = Math.floor((now - past) / 1000);
+  if (diff < 60) return '방금';
+  if (diff < 3600) return \`\${Math.floor(diff/60)}분 전\`;
+  if (diff < 86400) return \`\${Math.floor(diff/3600)}시간 전\`;
+  return \`\${Math.floor(diff/86400)}일 전\`;
+}
+
+
 // ─── 메뉴 이모지 매칭 ──────────────────────
 function getMenuEmoji(text) {
   if (/탕수육|스테이크|깐풍|돈까스|불고기|갈비|삼겹|제육|함박|유린기|꼬막/.test(text)) return '🍖';
@@ -224,13 +237,32 @@ function selectDay(index) {
   }
 
   area.innerHTML = html;
+
+  // 식단 요청하기 버튼 & 최근 요청
+  if (!document.getElementById('requestSection')) {
+    const requestSection = document.createElement('div');
+    requestSection.id = 'requestSection';
+    requestSection.innerHTML = \`
+      <div class="request-section">
+        <button class="btn-request" onclick="openRequest()">
+          💡 식단 요청하기
+        </button>
+        <div class="recent-requests" id="recentRequests">
+          <div class="loading">최근 요청을 불러오는 중...</div>
+        </div>
+      </div>
+    \`;
+    document.getElementById('menuArea').appendChild(requestSection);
+  }
+
+  // 최근 요청 로드
+  fetchRecentRequests();
 }
 
 function renderCard(icon, name, time, items) {
   const menuItems = items.map(item => {
     const emoji = getMenuEmoji(item);
     // 반응 이모지 랜덤 생성 (시드: 메뉴명 해시)
-    const reactions = generateReactions(item);
     return `<li class="menu-item">
       <span class="menu-emoji">${emoji}</span>
       <span class="menu-text">${item}</span>
@@ -258,11 +290,7 @@ function renderCard(icon, name, time, items) {
         </div>
         <span class="card-badge">${time}</span>
       </div>
-      <ul class="menu-list">${menuItems}</ul>
-      <div class="card-footer">
-        <span class="reaction-bar">${reactionBtns}</span>
-      </div>
-    </div>`;
+      <ul class="menu-list">${menuItems}</ul></div>`;
 }
 
 function renderEmptyCard(icon, name, msg) {
