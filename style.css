@@ -1,0 +1,291 @@
+/* ─── Reset & Base ─────────────────────────── */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --green: #1a6b3c;
+  --green-dark: #0f4d2a;
+  --green-light: #2ecc71;
+  --green-bg: #eafaf1;
+  --orange: #f39c12;
+  --bg: #f5f6f0;
+  --card: #ffffff;
+  --text: #2c3e50;
+  --text-sub: #7f8c8d;
+  --border: #e8e8e0;
+  --radius: 16px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  --shadow-hover: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+body {
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── App Container ────────────────────────── */
+.app {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+/* ─── Header ───────────────────────────────── */
+.header {
+  background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+  color: white;
+  padding: 28px 20px 22px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: var(--bg);
+  border-radius: 50% 50% 0 0;
+}
+
+.header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.subtitle {
+  font-size: 13px;
+  opacity: 0.85;
+  margin-top: 6px;
+  font-weight: 400;
+}
+
+/* ─── Tabs ─────────────────────────────────── */
+.tabs {
+  display: flex;
+  gap: 0;
+  background: var(--card);
+  margin: 0 12px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.tab {
+  flex: 1;
+  padding: 14px 4px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-sub);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.tab:hover { color: var(--green); background: var(--green-bg); }
+
+.tab.active {
+  color: white;
+  background: var(--green);
+  font-weight: 700;
+  border-radius: 12px;
+  margin: 3px;
+  box-shadow: 0 2px 8px rgba(26,107,60,0.3);
+}
+
+.tab.today::after {
+  content: '';
+  position: absolute;
+  top: 7px;
+  right: 12px;
+  width: 6px;
+  height: 6px;
+  background: var(--orange);
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(243,156,18,0.5);
+}
+
+.tab.active.today::after {
+  background: white;
+  box-shadow: 0 0 6px rgba(255,255,255,0.5);
+}
+
+/* ─── Menu Area ────────────────────────────── */
+.menu-area {
+  flex: 1;
+  padding: 16px 12px;
+}
+
+.restaurant-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px;
+  margin-bottom: 14px;
+  transition: box-shadow 0.2s;
+  border: 1px solid var(--border);
+}
+
+.restaurant-card:hover { box-shadow: var(--shadow-hover); }
+
+.restaurant-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--green);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--green-bg);
+}
+
+.restaurant-icon { font-size: 20px; }
+
+.menu-list { list-style: none; }
+
+.menu-item {
+  font-size: 14px;
+  padding: 9px 0;
+  border-bottom: 1px dashed var(--border);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.menu-item:last-child { border-bottom: none; }
+
+.menu-bullet {
+  width: 6px;
+  height: 6px;
+  background: var(--green-light);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+.no-menu {
+  color: var(--text-sub);
+  font-size: 14px;
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.closed {
+  text-align: center;
+  padding: 30px 20px;
+  color: var(--text-sub);
+  font-size: 14px;
+}
+
+.closed-icon { font-size: 40px; margin-bottom: 10px; }
+
+/* ─── Footer ───────────────────────────────── */
+.footer {
+  padding: 16px 12px 32px;
+  text-align: center;
+}
+
+.btn-refresh {
+  background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+  color: white;
+  border: none;
+  border-radius: 28px;
+  padding: 14px 32px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.25s;
+  box-shadow: 0 4px 14px rgba(26,107,60,0.3);
+  letter-spacing: -0.3px;
+}
+
+.btn-refresh:active {
+  transform: scale(0.96);
+  box-shadow: 0 2px 8px rgba(26,107,60,0.3);
+}
+
+.btn-refresh.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.update-info {
+  font-size: 11px;
+  color: var(--text-sub);
+  margin-top: 10px;
+}
+
+.source-info {
+  font-size: 10px;
+  color: var(--text-sub);
+  margin-top: 6px;
+  opacity: 0.7;
+}
+
+.source-info a {
+  color: var(--text-sub);
+  text-decoration: none;
+}
+
+.source-info a:hover { text-decoration: underline; }
+
+/* ─── Loading ──────────────────────────────── */
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-sub);
+  font-size: 14px;
+}
+
+.loading::before {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  margin: 0 auto 14px;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── Error ────────────────────────────────── */
+.error {
+  text-align: center;
+  padding: 50px 20px;
+  color: #e74c3c;
+  font-size: 14px;
+}
+
+/* ─── Cache Badge ──────────────────────────── */
+.cache-badge {
+  display: inline-block;
+  background: var(--orange);
+  color: white;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 8px;
+  font-weight: 600;
+  vertical-align: middle;
+}

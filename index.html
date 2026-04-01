@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#2d5016">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192.svg" type="image/svg+xml">
+  <title>🍽️ 국회도서관 식단표</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <h1>🍽️ 국회도서관 식단표</h1>
+      <p class="subtitle" id="dateRange">로딩 중...</p>
+    </header>
+
+    <nav class="tabs" id="dayTabs"></nav>
+
+    <main class="menu-area" id="menuArea">
+      <div class="loading">불러오는 중...</div>
+    </main>
+
+    <footer class="footer">
+      <button class="btn-refresh" id="btnRefresh" onclick="refreshMenu()">
+        🔄 재수집
+      </button>
+      <p class="update-info" id="updateInfo"></p>
+      <p class="source-info">
+        <a href="https://www.nanet.go.kr" target="_blank" rel="noopener">국회도서관</a>
+        · GitHub Actions로 자동 수집
+      </p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
