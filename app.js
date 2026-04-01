@@ -1,21 +1,48 @@
-// 국회도서관 식단표 v2 — 순수 JS (GitHub Pages)
-// data/menu.json에서 로드, localStorage 캐싱
+// 국회도서관 식단표 v3 — 순수 JS (GitHub Pages)
 
 let menuData = null;
 let currentDayIndex = -1;
 
 const CACHE_KEY = 'foodscrap_menu';
-const CACHE_MAX_AGE = 6 * 60 * 60 * 1000; // 6시간
+const CACHE_MAX_AGE = 6 * 60 * 60 * 1000;
 
-// ─── 요일 파싱 ──────────────────────────────
+const DAY_NAMES = ['일','월','화','수','목','금','토'];
+
 function getTodayDayName() {
-  const d = new Date().getDay();
-  return d === 0 ? '일' : ['월','화','수','목','금','토','일'][d];
+  return DAY_NAMES[new Date().getDay()];
 }
 
 function parseDayChar(dayLabel) {
   const m = dayLabel.match(/\((.)\)/);
   return m ? m[1] : dayLabel;
+}
+
+function parseDateNum(dayLabel) {
+  const m = dayLabel.match(/(\d{1,2})\./);
+  return m ? m[1] : '';
+}
+
+function parseDayOfWeek(dayLabel) {
+  const m = dayLabel.match(/\(([가-힣])\)/);
+  return m ? m[1] : '';
+}
+
+// ─── 메뉴 이모지 매칭 ──────────────────────
+function getMenuEmoji(text) {
+  if (/탕수육|스테이크|깐풍|돈까스|불고기|갈비|삼겹|제육|함박|유린기|꼬막/.test(text)) return '🍖';
+  if (/국|탕|찌개|스프/.test(text)) return '🍲';
+  if (/밥|볶음밥|비빔밥|잡곡밥|현미/.test(text)) return '🍚';
+  if (/면|국수|라면|라멘|짬뽕|짜장|우동|쫄면|쌀국수/.test(text)) return '🍜';
+  if (/샐러드/.test(text)) return '🥗';
+  if (/생선|고등어|가자미|갈치|코다리/.test(text)) return '🐟';
+  if (/김치|깍두기|무침|겉절이|열무/.test(text)) return '🥬';
+  if (/튀김|까스|강정/.test(text)) return '🍤';
+  if (/카레|커리/.test(text)) return '🍛';
+  if (/계란|오므라이스/.test(text)) return '🍳';
+  if (/스프|죽/.test(text)) return '🥣';
+  if (/빵|식빵/.test(text)) return '🍞';
+  if (/영업을하지않습니다/.test(text)) return '😴';
+  return '🍴';
 }
 
 // ─── 캐시 관리 ──────────────────────────────
@@ -31,11 +58,8 @@ function getCached() {
 
 function setCached(data) {
   try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify({
-      timestamp: Date.now(),
-      data: data
-    }));
-  } catch { /* quota exceeded, ignore */ }
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data }));
+  } catch {}
 }
 
 function clearCached() {
@@ -44,15 +68,12 @@ function clearCached() {
 
 // ─── API 호출 ──────────────────────────────
 async function fetchMenu(bypassCache = false) {
-  // 캐시 확인
   if (!bypassCache) {
     const cached = getCached();
     if (cached) return { ...cached, _cached: true };
   }
-
-  // GitHub Pages에서 menu.json 로드
-  const cacheBuster = bypassCache ? `?t=${Date.now()}` : '';
-  const resp = await fetch(`data/menu.json${cacheBuster}`);
+  const cb = bypassCache ? `?t=${Date.now()}` : '';
+  const resp = await fetch(`data/menu.json${cb}`);
   if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
   const data = await resp.json();
   setCached(data);
@@ -63,7 +84,6 @@ async function fetchMenu(bypassCache = false) {
 async function init() {
   const area = document.getElementById('menuArea');
   area.innerHTML = '<div class="loading">불러오는 중...</div>';
-
   try {
     menuData = await fetchMenu();
     if (menuData.error) {
@@ -78,12 +98,10 @@ async function init() {
 
 // ─── 렌더링 ────────────────────────────────
 function render(isCached = false) {
-  // 제목
   let subtitle = menuData.date_range || '';
   if (isCached) subtitle += ' <span class="cache-badge">캐시</span>';
   document.getElementById('dateRange').innerHTML = subtitle;
 
-  // 탭 생성
   const tabsEl = document.getElementById('dayTabs');
   tabsEl.innerHTML = '';
   const todayName = getTodayDayName();
@@ -92,7 +110,11 @@ function render(isCached = false) {
     const btn = document.createElement('button');
     btn.className = 'tab';
     const dayChar = parseDayChar(day.day);
-    btn.textContent = dayChar;
+    const dateNum = parseDateNum(day.day);
+    const dayOfWeek = parseDayOfWeek(day.day);
+
+    // 탭: 날짜 숫자 + 요일
+    btn.innerHTML = `<span class="tab-day">${dateNum || dayChar}</span><span class="tab-date">${dayOfWeek}</span>`;
 
     if (dayChar === todayName) {
       btn.classList.add('today');
@@ -106,11 +128,12 @@ function render(isCached = false) {
   if (currentDayIndex === -1) currentDayIndex = 0;
   selectDay(currentDayIndex);
 
-  // 업데이트 시간
   const fetchedAt = menuData.fetched_at
-    ? new Date(menuData.fetched_at).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })
+    ? new Date(menuData.fetched_at).toLocaleTimeString('ko-KR', {
+        timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', hour12: true
+      })
     : '알 수 없음';
-  document.getElementById('updateInfo').textContent = `수집: ${fetchedAt}`;
+  document.getElementById('updateInfo').textContent = `Last Updated: ${fetchedAt}`;
 }
 
 // ─── 날짜 선택 ──────────────────────────────
@@ -130,48 +153,78 @@ function selectDay(index) {
     arr.some(m => m.includes('영업을하지않습니다') || m.includes('영업을 하지 않습니다'));
 
   let html = '';
-  html += renderCard('도서관식당', '📚', libs, isClosed(libs));
-  html += renderCard('박물관식당', '🏛️', mus, isClosed(mus));
 
-  if (!html) html = '<div class="no-menu">메뉴 정보가 없습니다</div>';
+  // 날짜 제목
+  html += `<div class="date-title">${day.day}</div>`;
+
+  // 도서관식당 카드 (중식)
+  if (libs.length) {
+    if (isClosed(libs)) {
+      html += renderEmptyCard('📚', '도서관식당', '영업을 하지 않습니다');
+    } else {
+      html += renderCard('📚', '도서관식당', '11:30 ~ 13:30', libs);
+    }
+  }
+
+  // 박물관식당 카드 (석식)
+  if (mus.length) {
+    if (isClosed(mus)) {
+      html += renderEmptyCard('🏛️', '박물관식당', '영업을 하지 않습니다');
+    } else {
+      html += renderCard('🏛️', '박물관식당', '11:30 ~ 13:30', mus);
+    }
+  }
+
+  if (!html || html === `<div class="date-title">${day.day}</div>`) {
+    html += '<div class="empty-card"><div class="empty-icon">📭</div><div class="empty-text">메뉴 정보가 없습니다</div></div>';
+  }
+
   area.innerHTML = html;
 }
 
-function renderCard(name, icon, items, closed) {
-  if (closed) {
-    return `
-      <div class="restaurant-card">
-        <div class="restaurant-name">
-          <span class="restaurant-icon">${icon}</span>${name}
-        </div>
-        <div class="closed">
-          <div class="closed-icon">😴</div>
-          영업을 하지 않습니다
-        </div>
-      </div>`;
-  }
-
-  if (!items.length) return '';
-
-  const list = items
-    .map(m => `<li class="menu-item"><span class="menu-bullet"></span>${m}</li>`)
-    .join('');
+function renderCard(icon, name, time, items) {
+  const menuItems = items.map(item => {
+    const emoji = getMenuEmoji(item);
+    return `<li class="menu-item">
+      <span class="menu-emoji">${emoji}</span>
+      <span class="menu-text">${item}</span>
+    </li>`;
+  }).join('');
 
   return `
-    <div class="restaurant-card">
-      <div class="restaurant-name">
-        <span class="restaurant-icon">${icon}</span>${name}
+    <div class="menu-card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="card-icon">${icon}</span>
+          <span class="card-name">${name}</span>
+        </div>
+        <span class="card-badge">${time}</span>
       </div>
-      <ul class="menu-list">${list}</ul>
+      <ul class="menu-list">${menuItems}</ul>
     </div>`;
 }
 
-// ─── 재수집 (캐시 무시하고 menu.json 재패치) ──
+function renderEmptyCard(icon, name, msg) {
+  return `
+    <div class="menu-card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="card-icon">${icon}</span>
+          <span class="card-name">${name}</span>
+        </div>
+      </div>
+      <div class="empty-card">
+        <div class="empty-icon">😴</div>
+        <div class="empty-text">${msg}</div>
+      </div>
+    </div>`;
+}
+
+// ─── 재수집 ──────────────────────────────
 async function refreshMenu() {
   const btn = document.getElementById('btnRefresh');
   btn.classList.add('loading');
   btn.textContent = '⏳ 갱신 중...';
-
   try {
     clearCached();
     menuData = await fetchMenu(true);
@@ -189,5 +242,4 @@ async function refreshMenu() {
   }
 }
 
-// ─── 시작 ──────────────────────────────────
 document.addEventListener('DOMContentLoaded', init);
