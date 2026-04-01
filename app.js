@@ -27,6 +27,34 @@ function parseDayOfWeek(dayLabel) {
   return m ? m[1] : '';
 }
 
+
+// ─── 반응 이모지 생성 ──────────────────────
+function generateReactions(text) {
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) {
+    hash = ((hash << 5) - hash) + text.charCodeAt(i);
+    hash |= 0;
+  }
+  const all = ['👍','😋','🔥','❤️','🤤','💯','👏','😊'];
+  const count = Math.abs(hash % 3) + 1;
+  const selected = [];
+  for (let i = 0; i < count; i++) {
+    const idx = (hash + i * 7) % all.length;
+    selected.push(all[Math.abs(idx)]);
+  }
+  return selected.join('');
+}
+
+// ─── 반응 토글 ──────────────────────────────
+function toggleReaction(el) {
+  el.classList.toggle('active');
+}
+
+function showComments(el) {
+  // 향후 댓글 상세보기 기능
+  el.classList.toggle('active');
+}
+
 // ─── 메뉴 이모지 매칭 ──────────────────────
 function getMenuEmoji(text) {
   if (/탕수육|스테이크|깐풍|돈까스|불고기|갈비|삼겹|제육|함박|유린기|꼬막/.test(text)) return '🍖';
@@ -185,9 +213,12 @@ function selectDay(index) {
 function renderCard(icon, name, time, items) {
   const menuItems = items.map(item => {
     const emoji = getMenuEmoji(item);
+    // 반응 이모지 랜덤 생성 (시드: 메뉴명 해시)
+    const reactions = generateReactions(item);
     return `<li class="menu-item">
       <span class="menu-emoji">${emoji}</span>
       <span class="menu-text">${item}</span>
+      <span class="menu-reactions">${reactions}</span>
     </li>`;
   }).join('');
 
@@ -201,6 +232,14 @@ function renderCard(icon, name, time, items) {
         <span class="card-badge">${time}</span>
       </div>
       <ul class="menu-list">${menuItems}</ul>
+      <div class="card-footer">
+        <span class="reaction-bar" onclick="toggleReaction(this)">
+          <span class="reaction-btn">👍 12</span>
+          <span class="reaction-btn">😋 8</span>
+          <span class="reaction-btn">🔥 5</span>
+        </span>
+        <span class="comment-count" onclick="showComments(this)">💬 3</span>
+      </div>
     </div>`;
 }
 

@@ -343,3 +343,65 @@ body {
   font-weight: 600;
   vertical-align: middle;
 }
+
+/* ─── 반응 & 댓글 ────────────────────────── */
+.menu-reactions {
+  font-size: 12px;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text-sub);
+}
+
+.reaction-bar {
+  display: flex;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.reaction-btn {
+  padding: 3px 8px;
+  border-radius: 12px;
+  background: var(--bg);
+  font-size: 12px;
+  transition: background 0.2s;
+}
+
+.reaction-btn:hover {
+  background: var(--cyan-bg);
+}
+
+.reaction-bar.active .reaction-btn {
+  background: var(--cyan-bg);
+  color: var(--cyan-dark);
+}
+
+.comment-count {
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-sub);
+  transition: color 0.2s;
+}
+
+.comment-count:hover,
+.comment-count.active {
+  color: var(--cyan-dark);
+}
+
+/* ─── 탭 개선 ────────────────────────────── */
+.tab.active .tab-date {
+  color: var(--cyan-dark);
+  font-weight: 600;
+}
+
+.tab.today .tab-day {
+  color: var(--red);
+}

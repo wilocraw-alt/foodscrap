@@ -1,35 +1,60 @@
-# QA Report - Foodscrap v4
+# 🔍 QA Report v4 - 엄밀 평가
 
-## Overall Score: 8.5 / 10
+## 평가 방법
+사용자 스크린샷(ref_design_1/2.jpg)과 현재 구현(index.html, app.js, style.css)을 라인별 대조
 
-CONDITIONAL (minor adjustments needed)
+---
 
-## What's Working
-- Cyan theme header, background, cards
-- Day tabs with day number + day name
-- Today tab with red "Today" label
-- Date title above cards
-- Menu cards with icon + time badge + emoji items
-- Refresh button with loading state
-- Last Updated AM/PM format
-- Emoji auto-detection (approx 10 categories)
-- PWA manifest, icons, service worker
-- Mobile responsive layout
+## ❌ 발견된 결함
 
-## Minor Issues
-1. Card border-radius uses CSS variable (acceptable)
-2. Tab horizontal scroll might need -webkit-overflow-scrolling: touch (already present)
-3. Emoji mapping may need refinement
+### Critical (긴급)
+없음
 
-## Code Issues
-- JS comment contains em dash (—). Not a runtime issue.
-- No lint errors in browser console
+### Major (중요)
 
-## Recommendations
-- Test on actual Android device to verify PWA install
-- Tweak emoji keywords if needed based on actual menu items
-- Consider adding skeleton loading state
-- Add error boundary for failed JSON load
+#### 1. 탭 디자인 불일치
+- 레퍼런스: 탭에 요일 이름이 크게 표시 (Mon, Tue, Wed...)
+- 현재: 날짜 숫자(30, 31, 1...)가 메인, 요일이 작게 아래
+- **사용자 피드백: "날짜 대신 달이 나오고"** - 월 숫자만 보이는 문제
 
-## Go/No-Go
-CONDITIONAL GO: Can be deployed but verify on device. Minor tweaks in next iteration.
+#### 2. 카드 헤더 불일치
+- 레퍼런스: 식당 아이콘 + 이름 + 시간뱃지가 한 줄
+- 현재: 동일하나 뱃지 스타일이 다름 (pill vs flat)
+
+#### 3. 댓글/반응 기능 누락
+- 레퍼런스에 있던 댓글 표시 기능이 현재 구현에 없음
+- 사용자 피드백: "그림에 댓글도 있는데 없고"
+
+#### 4. 메뉴 이모지 매칭 부정확
+- 레퍼런스: 정확한 이모지 (🍖 국수 → 🍜, 고기 → 🍖)
+- 현재: 키워드 기반 매칭이 일부 틀림
+
+#### 5. 탭 활성화 스타일
+- 레퍼런스: 활성 탭에 하단 강조선 (cyan)
+- 현재: 배경색만 변경, 강조선 없음
+
+### Minor (경미)
+#### 6. 자간/폰트 사이즈 미세 불일치
+#### 7. 카드 그림자 강도 차이
+#### 8. 로딩 상태 표시 개선 필요
+
+---
+
+## 📋 수정 계획
+
+### Phase 1: 탭 수정
+- 날짜 숫자를 요일 이름으로 변경 (월, 화, 수, 목, 금)
+- 활성 탭에 하단 강조선 추가
+- Today 표시를 더 눈에 띄게
+
+### Phase 2: 카드 개선
+- 뱃지 스타일을 pill 형태로 수정
+- 그림자 강도 조정
+
+### Phase 3: 메뉴 이모지 정확도 향상
+- 더 정확한 키워드 매칭 추가
+
+### Phase 4: 검증
+- 브라우저 렌더링 확인
+- 모바일 반응형 테스트
+
