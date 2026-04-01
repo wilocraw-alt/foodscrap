@@ -57,12 +57,12 @@ function renderRequests(issues) {
   list.className = 'request-list';
   issues.forEach(issue => {
     const li = document.createElement('li');
-    li.innerHTML = \`
+    li.innerHTML = `
       <a href="\${issue.html_url}" target="_blank" rel="noopener">
         <strong>\${issue.title.replace(/^식단 요청: /, '')}</strong>
         <span class="meta">by \${issue.user.login} (\${timeAgo(issue.created_at)})</span>
       </a>
-    \`;
+    `;
     list.appendChild(li);
   });
   container.innerHTML = '';
@@ -78,9 +78,9 @@ function timeAgo(dateStr) {
   const past = new Date(dateStr).getTime();
   const diff = Math.floor((now - past) / 1000);
   if (diff < 60) return '방금';
-  if (diff < 3600) return \`\${Math.floor(diff/60)}분 전\`;
-  if (diff < 86400) return \`\${Math.floor(diff/3600)}시간 전\`;
-  return \`\${Math.floor(diff/86400)}일 전\`;
+  if (diff < 3600) return `\${Math.floor(diff/60)}분 전`;
+  if (diff < 86400) return `\${Math.floor(diff/3600)}시간 전`;
+  return `\${Math.floor(diff/86400)}일 전`;
 }
 
 
@@ -242,7 +242,7 @@ function selectDay(index) {
   if (!document.getElementById('requestSection')) {
     const requestSection = document.createElement('div');
     requestSection.id = 'requestSection';
-    requestSection.innerHTML = \`
+    requestSection.innerHTML = `
       <div class="request-section">
         <button class="btn-request" onclick="openRequest()">
           💡 식단 요청하기
@@ -251,7 +251,7 @@ function selectDay(index) {
           <div class="loading">최근 요청을 불러오는 중...</div>
         </div>
       </div>
-    \`;
+    `;
     document.getElementById('menuArea').appendChild(requestSection);
   }
 
