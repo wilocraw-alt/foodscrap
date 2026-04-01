@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icon-192.svg" type="image/svg+xml">
+  <link rel="icon" href="icon-192.png" type="image/svg+xml">
   <title>🍽️ 국회도서관 식단표</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,6 +39,12 @@
     </footer>
   </div>
 
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+  </script>
   <script src="app.js"></script>
 </body>
 </html>
