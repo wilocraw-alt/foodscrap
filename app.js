@@ -18,8 +18,8 @@ function parseDayChar(dayLabel) {
 }
 
 function parseDateNum(dayLabel) {
-  const m = dayLabel.match(/(\d{1,2})\./);
-  return m ? m[1] : '';
+  const m = dayLabel.match(/\d+\.(\d{1,2})/);
+  return m ? m[1] : dayLabel.match(/(\d{1,2})/)?.[0] || '';
 }
 
 function parseDayOfWeek(dayLabel) {
@@ -27,6 +27,31 @@ function parseDayOfWeek(dayLabel) {
   return m ? m[1] : '';
 }
 
+
+
+// ─── 반응 토글 (실제 동작) ──────────────────
+function react(btn) {
+  const countEl = btn.querySelector('.count');
+  let count = parseInt(countEl.textContent);
+  if (btn.classList.contains('reacted')) {
+    btn.classList.remove('reacted', 'active');
+    countEl.textContent = count - 1;
+  } else {
+    btn.classList.add('reacted', 'active');
+    countEl.textContent = count + 1;
+  }
+}
+
+// 해시 기반 랜덤 카운트
+function hashCount(text, emoji) {
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) {
+    hash = ((hash << 5) - hash) + text.charCodeAt(i);
+    hash |= 0;
+  }
+  hash += emoji.charCodeAt(0);
+  return Math.abs(hash % 15) + 1;
+}
 
 // ─── 반응 이모지 생성 ──────────────────────
 function generateReactions(text) {
@@ -46,15 +71,6 @@ function generateReactions(text) {
 }
 
 // ─── 반응 토글 ──────────────────────────────
-function toggleReaction(el) {
-  el.classList.toggle('active');
-}
-
-function showComments(el) {
-  // 향후 댓글 상세보기 기능
-  el.classList.toggle('active');
-}
-
 // ─── 메뉴 이모지 매칭 ──────────────────────
 function getMenuEmoji(text) {
   if (/탕수육|스테이크|깐풍|돈까스|불고기|갈비|삼겹|제육|함박|유린기|꼬막/.test(text)) return '🍖';
@@ -222,6 +238,17 @@ function renderCard(icon, name, time, items) {
     </li>`;
   }).join('');
 
+  // 카드의 대표 반응 (첫 번째 메뉴 기반)
+  const representativeItem = items[0] || '';
+  const reactions = [
+    {emoji: '👍', count: hashCount(representativeItem, '👍')},
+    {emoji: '😋', count: hashCount(representativeItem, '😋')},
+    {emoji: '🔥', count: hashCount(representativeItem, '🔥')},
+  ];
+  const reactionBtns = reactions.map(r =>
+    `<span class="reaction-btn" onclick="react(this)" data-emoji="${r.emoji}">${r.emoji} <span class="count">${r.count}</span></span>`
+  ).join('');
+
   return `
     <div class="menu-card">
       <div class="card-header">
@@ -233,12 +260,7 @@ function renderCard(icon, name, time, items) {
       </div>
       <ul class="menu-list">${menuItems}</ul>
       <div class="card-footer">
-        <span class="reaction-bar" onclick="toggleReaction(this)">
-          <span class="reaction-btn">👍 12</span>
-          <span class="reaction-btn">😋 8</span>
-          <span class="reaction-btn">🔥 5</span>
-        </span>
-        <span class="comment-count" onclick="showComments(this)">💬 3</span>
+        <span class="reaction-bar">${reactionBtns}</span>
       </div>
     </div>`;
 }

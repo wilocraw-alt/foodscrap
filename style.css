@@ -405,3 +405,13 @@ body {
 .tab.today .tab-day {
   color: var(--red);
 }
+
+.reaction-btn.reacted {
+  background: var(--cyan-bg);
+  color: var(--cyan-dark);
+  font-weight: 600;
+}
+
+.reaction-btn.reacted .count {
+  color: var(--cyan-dark);
+}
