@@ -58,9 +58,9 @@ function renderRequests(issues) {
   issues.forEach(issue => {
     const li = document.createElement('li');
     li.innerHTML = `
-      <a href="\${issue.html_url}" target="_blank" rel="noopener">
-        <strong>\${issue.title.replace(/^식단 요청: /, '')}</strong>
-        <span class="meta">by \${issue.user.login} (\${timeAgo(issue.created_at)})</span>
+      <a href="${issue.html_url}" target="_blank" rel="noopener">
+        <strong>${issue.title.replace(/^식단 요청: /, '')}</strong>
+        <span class="meta">by ${issue.user.login} (${timeAgo(issue.created_at)})</span>
       </a>
     `;
     list.appendChild(li);
@@ -78,9 +78,9 @@ function timeAgo(dateStr) {
   const past = new Date(dateStr).getTime();
   const diff = Math.floor((now - past) / 1000);
   if (diff < 60) return '방금';
-  if (diff < 3600) return `\${Math.floor(diff/60)}분 전`;
-  if (diff < 86400) return `\${Math.floor(diff/3600)}시간 전`;
-  return `\${Math.floor(diff/86400)}일 전`;
+  if (diff < 3600) return `${Math.floor(diff/60)}분 전`;
+  if (diff < 86400) return `${Math.floor(diff/3600)}시간 전`;
+  return `${Math.floor(diff/86400)}일 전`;
 }
 
 
@@ -262,24 +262,11 @@ function selectDay(index) {
 function renderCard(icon, name, time, items) {
   const menuItems = items.map(item => {
     const emoji = getMenuEmoji(item);
-    // 반응 이모지 랜덤 생성 (시드: 메뉴명 해시)
     return `<li class="menu-item">
       <span class="menu-emoji">${emoji}</span>
       <span class="menu-text">${item}</span>
-      <span class="menu-reactions">${reactions}</span>
     </li>`;
   }).join('');
-
-  // 카드의 대표 반응 (첫 번째 메뉴 기반)
-  const representativeItem = items[0] || '';
-  const reactions = [
-    {emoji: '👍', count: hashCount(representativeItem, '👍')},
-    {emoji: '😋', count: hashCount(representativeItem, '😋')},
-    {emoji: '🔥', count: hashCount(representativeItem, '🔥')},
-  ];
-  const reactionBtns = reactions.map(r =>
-    `<span class="reaction-btn" onclick="react(this)" data-emoji="${r.emoji}">${r.emoji} <span class="count">${r.count}</span></span>`
-  ).join('');
 
   return `
     <div class="menu-card">
@@ -290,7 +277,8 @@ function renderCard(icon, name, time, items) {
         </div>
         <span class="card-badge">${time}</span>
       </div>
-      <ul class="menu-list">${menuItems}</ul></div>`;
+      <ul class="menu-list">${menuItems}</ul>
+    </div>`;
 }
 
 function renderEmptyCard(icon, name, msg) {
