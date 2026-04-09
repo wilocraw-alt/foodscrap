@@ -38,7 +38,7 @@ async function fetchRecentRequests() {
   if (!container) return;
 
   try {
-    const resp = await fetch('https://api.github.com/repos/wilocraw-alt/foodscrap/issues?labels=menu-request&per_page=5');
+    const resp = await fetch("https://api.github.com/repos/wilocraw-alt/foodscrap/issues?labels=menu-request&state=open&per_page=5");
     if (!resp.ok) throw new Error('API error');
     const issues = await resp.json();
     renderRequests(issues);
