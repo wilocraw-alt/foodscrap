@@ -3,7 +3,7 @@ name: Fetch Weekly Menu
 on:
   # 매일 오전 9시 (KST = UTC 0시) 실행
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '37 23 * * *'
   # 수동 실행 가능
   workflow_dispatch:
 
